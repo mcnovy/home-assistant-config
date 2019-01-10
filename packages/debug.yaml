@@ -1,0 +1,46 @@
+################################################################
+## Packages / home
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'debug'
+
+      expose: &expose
+        <<: *customize
+
+
+    group.all_automations:
+      <<: *customize
+      hidden: false
+    group.all_scripts:
+      <<: *customize
+      hidden: false
+    group.all_devices:
+      <<: *customize
+      hidden: false
+    group.calendar:
+      <<: *customize
+      hidden: false
+
+group:
+  debug:
+    view: yes
+    icon: mdi:bug
+    control: hidden
+    name: debug
+    entities:
+      - group.all_automations
+      - group.all_scripts
+      - group.calendar
+      - group.all_devices

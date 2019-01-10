@@ -1,0 +1,453 @@
+################################################################
+## Packages / Xiaomi Aqara
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'xiaomi_aqara'
+
+      expose: &expose
+        <<: *customize
+
+    ################################################
+    ## Motion Sensors
+    ################################################
+
+    binary_sensor.motion_sensor_158d00016c1173:
+      <<: *customize
+      friendly_name: "Washing room pir"
+
+    binary_sensor.motion_sensor_158d0001d97247:
+      <<: *customize
+      friendly_name: "Kitchen cabinet corner pir"
+
+    binary_sensor.motion_sensor_158d0001d926b0:
+      <<: *customize
+      friendly_name: "Kitchen cabinet pir"
+
+    ################################################
+    ## Switch
+    ################################################
+
+    binary_sensor.switch_158d00016d72e9:
+      <<: *customize
+      friendly_name: "Door Bell"
+
+    binary_sensor.switch_158d00016d911c:
+      <<: *customize
+      friendly_name: "Kitchen Spot Switch"
+
+    ################################################
+    ## Lux
+    ################################################
+
+    sensor.illumination_158d0001e55925:
+      <<: *customize
+      friendly_name: "Xiaomi Gateway lux"
+    sensor.illumination_34ce00fa61af:
+      <<: *customize
+      friendly_name: "Washing room lux"
+
+    ################################################
+    ## Thermostats
+    ################################################
+
+    sensor.temperature_158d00016ff8b1:
+      <<: *customize
+      friendly_name: "Outdoor Thermostat"
+
+    sensor.temperature_158d000170f80c:
+      <<: *customize
+      friendly_name: "Refridgerator Thermostat"
+
+    sensor.temperature_158d0001b94b81:
+      <<: *customize
+      friendly_name: "Washing Room Thermostat"
+
+    sensor.temperature_158d0001b790d1:
+      <<: *customize
+      friendly_name: "Kitchen Thermostat"
+
+    sensor.temperature_158d0001873200:
+      <<: *customize
+      friendly_name: "Amplifier Thermostat"
+
+    ################################################
+    ## Humidity
+    ################################################
+
+    sensor.humidity_158d00016ff8b1:
+      <<: *customize
+      friendly_name: "Outdoor Humidity"
+
+    sensor.humidity_158d000170f80c:
+      <<: *customize
+      friendly_name: "Refridgerator Humidity"
+
+    sensor.humidity_158d0001b94b81:
+      <<: *customize
+      friendly_name: "Washing Room Humidity"
+
+    sensor.humidity_158d0001b790d1:
+      <<: *customize
+      friendly_name: "Kitchen Humidity"
+
+    sensor.humidity_158d0001873200:
+      <<: *customize
+      friendly_name: "Amplifier Humidity"
+
+    ################################################
+    ## Door Window Sensors
+    ################################################
+
+    binary_sensor.door_window_sensor_158d0001873fab:
+      <<: *customize
+      friendly_name: "Family Room South"
+
+    binary_sensor.door_window_sensor_158d00019e16b9:
+      <<: *customize
+      friendly_name: "Kitchen Window"
+
+    binary_sensor.door_window_sensor_158d0001d63624:
+      <<: *customize
+      friendly_name: "Backdoor"
+
+    binary_sensor.door_window_sensor_158d0001d63711:
+      <<: *customize
+      friendly_name: "Bedroom Window"
+
+    binary_sensor.door_window_sensor_158d0001d639af:
+      <<: *customize
+      friendly_name: "Maindoor"
+
+    binary_sensor.door_window_sensor_158d0001d6838e:
+      <<: *customize
+      friendly_name: "Family Room North"
+
+    binary_sensor.door_window_sensor_158d0001d683b2:
+      <<: *customize
+      friendly_name: "Washer Room Window"
+
+    binary_sensor.door_window_sensor_158d0001d6843d:
+      <<: *customize
+      friendly_name: "Children Room Window"
+
+
+    ################################################
+    ## Group
+    ################################################
+
+    group.window_sensors:
+      <<: *customize
+      friendly_name: "Window Sensors"
+      icon: mdi:window-maximize
+
+    ################################################
+    ## Automation
+    ################################################
+
+#    automation.hue_master_bedroom_dimmer_good_morning_good_night:
+#      <<: *customize
+#      friendly_name: "Hue Master Bedroom Dimmer Good Morning Good Night"
+
+
+    ################################################
+    ## Binary Sensor
+    ################################################
+
+#    binary_sensor.guest_bathroom_motion:
+#      <<: *customize
+#      friendly_name: "Guest Bathroom Motion"
+#      device_class: motion
+
+    ################################################
+    ## Sensor
+    ################################################
+
+#    sensor.guest_bathroom_lux:
+#      <<: *customize
+#      friendly_name: "Guest Bathroom Lux"
+
+################################################
+## Xiaomi Aqara
+################################################
+
+xiaomi_aqara:
+#  interface: '172.10.0.10'
+  gateways:
+    - mac:
+      key: !secret xiaomi_token
+      host: 192.168.0.51
+
+################################################
+## Automations
+################################################
+
+automation:
+  - alias: global, doorbell
+    trigger:
+      - platform: event
+        event_type: xiaomi_aqara.click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d72e9
+          click_type: single
+      - platform: event
+        event_type: xiaomi_aqara.click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d72e9
+          click_type: long_click_press
+      - platform: event
+        event_type: xiaomi_aqara.click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d72e9
+          click_type: double
+    action:
+      - service: automation.turn_off
+        entity_id: automation.doorbell
+      - service: mqtt.publish
+        data:
+          topic: "homeassistant/doorbell"
+          payload: "on"
+          retain: "false"
+      - service: media_player.play_media
+        data:
+          entity_id: media_player.kitchen_home
+          media_content_id: "http://192.168.0.59:8123/local/ding.mp3"
+          media_content_type: 'audio/mp3'
+      - service: notify.discord
+        data_template:
+          target: "361984006688079876"
+          message: "@everyone - Ring Ring, nogen ringer på!"
+      - delay:
+          minutes: 1
+      - service: automation.turn_on
+        entity_id: automation.doorbell
+
+##### Toggle Tado if windows or doors are open.
+
+### Livingroom Tado Off
+  - alias: livingroom, window open turn off Tado
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001873fab, binary_sensor.door_window_sensor_158d0001d63624, binary_sensor.door_window_sensor_158d0001d6838e
+      # Optional
+      to: 'on'
+      # If given, will trigger when state has been the to state for X time.
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.living_room
+          operation_mode: "Off"
+
+### Livingroom Tado On
+  - alias: livingroom, window closed turn on Tado
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001873fab, binary_sensor.door_window_sensor_158d0001d63624, binary_sensor.door_window_sensor_158d0001d6838e
+      # Optional
+      to: 'off'
+      # If given, will trigger when state has been the to state for X time.
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.living_room
+          operation_mode: "Smart schedule"
+
+### Bedroom Tado Off
+  - alias: bedroom, window open turn off Tado
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d63711
+      # Optional
+      to: 'on'
+      # If given, will trigger when state has been the to state for X time.
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.bedroom
+          operation_mode: "Off"
+
+### Bedroom Tado On
+  - alias: bedroom, window closed turn on Tado
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d63711
+      # Optional
+      to: 'off'
+      # If given, will trigger when state has been the to state for X time.
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.bedroom
+          operation_mode: "Smart schedule"
+
+### childrens room Tado Off
+  - alias: childrens room, window open turn off Tado
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d6843d
+      # Optional
+      to: 'on'
+      # If given, will trigger when state has been the to state for X time.
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.children_room
+          operation_mode: "Off"
+
+### childrens room Tado On
+  - alias: childrens room, window closed turn on Tado
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d6843d
+      # Optional
+      to: 'off'
+      # If given, will trigger when state has been the to state for X time.
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 45
+    action:
+      - service: climate.set_operation_mode
+        data:
+          entity_id: climate.children_room
+          operation_mode: "Smart schedule"
+
+### Turn on Kitchen cabinet lights
+  - alias: kitchen, Turn on table lights
+    trigger:
+      - platform: event
+        event_type: click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d911c
+          click_type: single
+      - platform: event
+        event_type: click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d911c
+          click_type: long_click_press
+      - platform: event
+        event_type: click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d911c
+          click_type: double
+    condition:
+      - condition: state
+        entity_id: light.kitchen_cabinet
+        state: 'off'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_2
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_cabinet
+          brightness: 254
+          color_temp: 233
+
+
+### Turn off Kitchen cabinet lights
+  - alias: kitchen, Turn Off table lights
+    trigger:
+      - platform: event
+        event_type: click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d911c
+          click_type: single
+      - platform: event
+        event_type: click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d911c
+          click_type: long_click_press
+      - platform: event
+        event_type: click
+        event_data:
+          entity_id: binary_sensor.switch_158d00016d911c
+          click_type: double
+    condition:
+      - condition: state
+        entity_id: light.kitchen_cabinet
+        state: 'on'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch_2
+      - service: light.turn_off
+        data:
+          entity_id: light.kitchen_cabinet
+
+
+  - alias: kitchen, Turn on table lights by movement
+    trigger:
+      platform: state
+      entity_id: binary_sensor.motion_sensor_158d0001d97247, binary_sensor.motion_sensor_158d0001d926b0
+      to: 'on'
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_threshold_kitchen
+      state: 'on'
+    action:
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_2
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_cabinet
+          brightness: 254
+          color_temp: 233
+
+
+  - alias: kitchen, Turn off table lights by movement
+    trigger:
+      platform: state
+      entity_id: binary_sensor.motion_sensor_158d0001d97247, binary_sensor.motion_sensor_158d0001d926b0
+      to: 'off'
+      for:
+        hours: 0
+        minutes: 3
+        seconds: 0
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: 'binary_sensor.motion_sensor_158d0001d97247'
+          state: 'off'
+        - condition: state
+          entity_id: 'binary_sensor.motion_sensor_158d0001d926b0'
+          state: 'off'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch_2
+      - service: light.turn_off
+        entity_id: light.kitchen_cabinet

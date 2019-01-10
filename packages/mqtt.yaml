@@ -1,0 +1,53 @@
+################################################################
+## Packages / MQTT
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'mqtt'
+
+      expose: &expose
+        <<: *customize
+
+#################################################
+## MQTT
+#################################################
+
+mqtt:
+  broker: core-mosquitto
+  username: !secret mqttuser
+  password: !secret mqttpassword
+
+# mqtt_statestream:
+#   base_topic: homeassistant
+#   publish_attributes: false
+#   publish_timestamps: false
+#   include:
+#     entities:
+#       - binary_sensor.door_window_sensor_158d0001d639af
+#       - binary_sensor.door_window_sensor_158d00019e16b9
+#       - binary_sensor.door_window_sensor_158d0001d63711
+#       - binary_sensor.door_window_sensor_158d0001d6843d
+#       - binary_sensor.door_window_sensor_158d0001d63624
+#       - binary_sensor.door_window_sensor_158d0001d6838e
+#       - binary_sensor.door_window_sensor_158d0001873fab
+#       - binary_sensor.switch_158d00016d72e9
+#       - binary_sensor.motion_sensor_158d00016c1173
+#       - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+#       - binary_sensor.door_window_sensor_158d0001d683b2
+#       - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar
+#       - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4
+#       - device_tracker.galaxys9
+#       - device_tracker.galaxy_s9
+#       - device_tracker.huawei_p9_lite
+#       - group.isanyonehome

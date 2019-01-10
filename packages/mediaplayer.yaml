@@ -1,0 +1,83 @@
+################################################################
+## Packages / Sonos
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'sonos'
+
+      expose: &expose
+        <<: *customize
+
+
+#################################################
+##### Group
+#################################################
+
+group:
+  media_players:
+    control: hidden
+    view: yes
+    icon: mdi:library-music
+    name: Media Players
+    entities:
+      - media_player.bathroom
+      - media_player.bedroom
+      - media_player.bryggers
+      - media_player.family_room
+      - media_player.kitchen
+      - media_player.kitchen_home
+
+
+
+#################################################
+## Scripts
+#################################################
+script:
+  sonosdoorbell:
+    sequence:
+      - service: media_player.sonos_snapshot
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+      - service: media_player.sonos_unjoin
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+      - service: media_player.volume_set
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+          volume_level: "{{ volume }}"
+      - service: media_player.play_media
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+          media_content_type: music
+          media_content_id: "http://192.168.0.59:8123/local/xmas.mp3"
+      - delay: "00:00:05"
+      - service: media_player.sonos_restore
+        data_template:
+          entity_id: "{{ sonos_entity }}"
+      - service: notify.discord
+        data_template:
+          target: "361984006688079876"
+          message: "@everyone - Ring Ring, nogen ringer på!"
+
+#################################################
+## Sonos
+#################################################
+
+sonos:
+  media_player:
+    hosts:
+      - 192.168.18.173
+      - 192.168.18.172
+      - 192.168.18.171
+      - 192.168.18.181

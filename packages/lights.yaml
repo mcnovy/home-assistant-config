@@ -1,0 +1,121 @@
+################################################################
+## Packages / Philips Hue
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'philips_hue'
+
+      expose: &expose
+        <<: *customize
+
+    group.hue:
+      <<: *customize
+      friendly_name: "Lights"
+    ################################################
+    ## Hidden Lights
+    ################################################
+
+#    light.back_porch_light:
+#      <<: *customize
+#      friendly_name: "Back Porch Light"
+#      hidden: true
+
+
+    ################################################
+    ## Visible Lights
+    ################################################
+
+#    light.back_porch:
+#      <<: *customize
+#      friendly_name: "Back Porch"
+
+    ################################################
+    ## Automation
+    ################################################
+
+#    automation.hue_master_bedroom_dimmer_good_morning_good_night:
+#      <<: *customize
+#      friendly_name: "Hue Master Bedroom Dimmer Good Morning Good Night"
+
+
+    ################################################
+    ## Binary Sensor
+    ################################################
+
+#    binary_sensor.guest_bathroom_motion:
+#      <<: *customize
+#      friendly_name: "Guest Bathroom Motion"
+#      device_class: motion
+
+    ################################################
+    ## Sensor
+    ################################################
+
+#    sensor.guest_bathroom_lux:
+#      <<: *customize
+#      friendly_name: "Guest Bathroom Lux"
+
+################################################
+## Light
+################################################
+
+hue:
+  bridges:
+    - host: !secret philips_hue_ip
+      filename: phue.conf
+      allow_hue_groups: true
+      allow_unreachable: true
+
+################################################
+## Automations
+################################################
+
+################################################
+# Group
+################################################
+
+group:
+  lights_overview:
+    view: yes
+    icon: mdi:lightbulb
+    entities:
+      - group.mostusedlights
+      - group.lux
+
+  mostusedlights:
+    entities:
+      - light.dining_room
+      - light.living_room
+      - light.behind_couch
+      - light.sideboard_high
+      - light.sideboard_low
+      - light.living_room_corner
+      - light.bedroom
+      - light.kitchen
+      - light.kitchen_cabinet
+      - light.bathroom
+      - light.washing_room
+      - light.entrance
+
+  lux:
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_4
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_2
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_5
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_6
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_7
+    - sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_3
+    - sensor.aeotec_zw100_multisensor_6_luminance
+    - sensor.illumination_158d0001e55925
+    - sensor.illumination_34ce00fa61af

@@ -1,0 +1,408 @@
+################################################################
+## Packages / Settings
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'settings'
+
+      expose: &expose
+        <<: *customize
+
+    group.settings:
+      <<: *customize
+      friendly_name: "Settings View"
+
+################################################
+## Group
+################################################
+
+group:
+  settings:
+    control: hidden
+    view: yes
+    icon: mdi:settings
+    name: Settings
+    entities:
+      - group.grp_settings_brightness
+      - group.grp_settings_delay
+      - input_boolean.alarm_active
+      - input_number.color_temp
+      - input_number.working_lights_temp
+      - group.grp_settings_misc
+      - group.grp_settings_light_threshold
+
+  grp_settings_brightness:
+    name: Brightness Settings
+    entities:
+      - input_number.hue_nightlight_brightness
+      - input_number.current_hue_brightness
+
+  grp_settings_delay:
+    name: Delay Settings
+    entities:
+      - input_number.kitchen_delay
+      - input_number.bathroom_delay
+      - input_number.entrance_delay
+      - input_number.hallway_delay
+
+  grp_settings_misc:
+    name: Misc Settings
+    entities:
+      - input_number.bathroom_fan_delay
+      - input_number.humidity_bathroom_fan_threshold_end
+      - input_number.humidity_bathroom_fan_threshold_start
+      - input_boolean.debug_messages
+      - input_select.climate_control
+
+  grp_settings_light_threshold:
+    name: Misc Settings
+    entities:
+      - input_number.lighting_threshold_entrance
+      - input_number.lighting_threshold_kitchen
+      - input_number.lighting_threshold_hallway
+      - input_number.lighting_threshold_outdoor
+      - input_number.lighting_threshold_bedroom
+      - input_number.lighting_threshold_livingroom
+      - input_number.lighting_threshold_dinner
+
+
+#################################################
+## Sliders
+#################################################
+
+#################################################
+## Input Slider / Brightness
+#################################################
+
+input_number:
+  hue_nightlight_brightness:
+    name: Global nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness:
+    name: Global current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_kitchen:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_kitchen:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_kitchen_cabinet:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_kitchen_cabinet:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_bathroom:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_bathroom:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_hallway:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_hallway:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_entrance:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_entrance:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_washing_room:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_washing_room:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_childrens_room:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_childrens_room:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_bedroom:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_bedroom:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_living_room:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_living_room:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+  hue_nightlight_brightness_diner:
+    name: nightlight brightness
+    min: 1
+    max: 255
+    step: 1
+
+  current_hue_brightness_diner:
+    name: current brightness
+    min: 1
+    max: 255
+    step: 1
+
+################################################################
+## Input Slider / Color
+################################################################
+
+  color_temp:
+    name: Color Temperatur
+    min: 0
+    max: 346
+    step: 1
+
+  working_lights_temp:
+    name: Working Lights temperature
+    min: 0
+    max: 346
+    step: 1
+
+################################################################
+## Input Slider / Delay
+################################################################
+
+  global_delay:
+    name: Delay Global
+    min: 0
+    max: 20
+    step: 1
+
+  kitchen_delay:
+    name: Delay Kitchen
+    min: 0
+    max: 20
+    step: 1
+
+  kitchen_cabinet_delay:
+    name: Delay Cabinet
+    min: 0
+    max: 20
+    step: 1
+
+  bathroom_delay:
+    name: Delay
+    min: 0
+    max: 20
+    step: 1
+
+  entrance_delay:
+    name: Delay Entrance
+    min: 0
+    max: 20
+    step: 1
+
+  hallway_delay:
+    name: Delay
+    min: 0
+    max: 20
+    step: 1
+
+  outdoor_delay:
+    name: Delay Outdoor
+    min: 0
+    max: 20
+    step: 1
+
+  bedroom_delay:
+    name: Delay
+    min: 0
+    max: 20
+    step: 1
+
+  childrens_room_delay:
+    name: Delay
+    min: 0
+    max: 20
+    step: 1
+
+  washing_room_delay:
+    name: Delay
+    min: 0
+    max: 20
+    step: 1
+
+################################################################
+## Input Slider / ligting_threshold
+################################################################
+
+  lighting_threshold_entrance:
+    name: Entrance Threshold
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_kitchen:
+    name: Threshold
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_hallway:
+    name: Threshold
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_outdoor:
+    name: outdoor Threshold
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_bedroom:
+    name: Threshold
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_livingroom:
+    name: living room Threshold
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_dinner:
+    name: dinner threshold
+    min: 5
+    max: 100
+    step: 1
+
+################################################################
+## Input Slider / Fan humidity
+################################################################
+
+
+  humidity_bathroom_fan_threshold_end:
+    name: humidity bathroom fan threshold end
+    min: 1
+    max: 100
+    step: 1
+
+  humidity_bathroom_fan_threshold_start:
+    name: humidity bathroom fan threshold start
+    min: 1
+    max: 100
+    step: 1
+
+  bathroom_fan_delay:
+    name: Fan Delay
+    min: 5
+    max: 90
+    step: 5
+
+
+###############################################################
+## Input Select
+###############################################################
+
+input_select:
+  climate_control:
+    name: Climate Control
+    options:
+      - Controlled by Tado
+      - Controlled by homeassistant
+      - Manual Mode
+      - Turned Off
+    icon: mdi:asterisk
+
+
+###############################################################
+## Input boolean
+###############################################################
+
+input_boolean:
+  automate_kitchen_cabinet_light:
+    name: Automate kitchen cabinet light
+    initial: off
+
+  audible_alarm:
+    name: Audible Alarm
+    initial: off
+    icon: mdi:alarm
+
+  alarm:
+    name: Alarm
+    initial: off
+    icon: mdi:alarm
+
+  alarm_active:
+    name: Alarm Active
+    initial: off
+    icon: mdi:alarm

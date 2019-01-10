@@ -1,0 +1,45 @@
+################################################################
+## Packages / Restful
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'restful'
+
+      expose: &expose
+        <<: *customize
+
+
+################################################
+## Binary sensor light threshold
+################################################
+
+switch:
+  - platform: rest
+    name: activate recording of backyard camera
+    resource: http://192.168.15.100/api/v1/condition/enabled
+    method: put
+    username: !secret cctv_username
+    password: !secret cctv_password
+    is_on_template: '{{value_json["active"]}}'
+    body_on: '{ "active": "true" }'
+    body_off: '{ "active": "false" }'
+    headers:
+      Content-Type: application/json
+
+  - platform: mqtt
+    name: doorbell_mqtt
+    state_topic: "home/doorbell"
+    command_topic: "home/doorbell"
+    payload_on: "activate"
+    payload_off: "stop"

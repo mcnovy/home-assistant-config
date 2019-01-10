@@ -1,0 +1,45 @@
+################################################################
+## Packages / Google Cast
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'google_cast'
+
+      expose: &expose
+#        <<: *customize
+#        haaska_hidden: false
+#        homebridge_hidden: false
+
+    ################################################
+    ## Media Player
+    ################################################
+
+    media_player.living_room_shield:
+      <<: *customize
+      friendly_name: "Living Room Shield"
+      icon: mdi:google-chrome
+
+    media_player.living_room_tv:
+      <<: *customize
+      friendly_name: "Living Room TV"
+      icon: mdi:google-chrome
+
+################################################
+## Media Player
+################################################
+
+cast:
+  media_player:
+    - host: !secret google_cast_living_room_tv_host
+    - host: !secret google_cast_living_room_shield_host

@@ -1,0 +1,138 @@
+################################################################
+## Packages / Binary Sensor
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'binary_sensor'
+
+      expose: &expose
+        <<: *customize
+
+    ################################################
+    ## Group
+    ################################################
+
+    # group.alarm_system:
+    #   <<: *customize
+    #   friendly_name: "Alarm System"
+
+    ################################################
+    ## Switch
+    ################################################
+
+#    switch.dining_room_siren_switch:
+#      <<: *customize
+#      friendly_name: "Dining Room Siren"
+
+#    switch.master_bedroom_siren_switch:
+#      <<: *customize
+#      friendly_name: "Master Bedroom Siren"
+
+################################################
+## Group
+################################################
+
+
+
+################################################
+## Binary sensor bathroom humidity threshold
+################################################
+
+binary_sensor:
+  - platform: template
+    sensors:
+      bath_hum_below_xx:
+        value_template: "{{ states.sensor.aeotec_zw100_multisensor_6_relative_humidity.state | float > states.input_number.humidity_bathroom_fan_threshold_end.state | float }}"
+        friendly_name: 'Bathroom dry below'
+        device_class: moisture
+  - platform: template
+    sensors:
+      bath_hum_above_xx:
+        value_template: "{{ states.sensor.aeotec_zw100_multisensor_6_relative_humidity.state | float > states.input_number.humidity_bathroom_fan_threshold_start.state | float }}"
+        friendly_name: 'Bathroom dry above'
+        device_class: moisture
+
+
+################################################
+## Binary sensor light threshold
+################################################
+
+
+  - platform: template
+    sensors:
+      light_threshold_entrance:
+        value_template: "{{ states.sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_3.state | float < states.input_number.lighting_threshold_entrance.state | float }}"
+        friendly_name: 'entrance Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
+      light_threshold_kitchen:
+        value_template: "{{ (states.sensor.fibaro_system_fgms001zw5_motion_sensor_luminance.state | float < states.input_number.lighting_threshold_kitchen.state | float) or (states.sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_4.state | float < states.input_number.lighting_threshold_kitchen.state | float) }}"
+        friendly_name: 'Kitchen Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
+      light_threshold_livingroom:
+        value_template: "{{ states.sensor.pirlivingroom_luminance.state | float < states.input_number.lighting_threshold_livingroom.state | float }}"
+        friendly_name: 'Living Room Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
+      light_threshold_dinner:
+        value_template: "{{ states.sensor.pirspisestue_luminance.state | float < states.input_number.lighting_threshold_dinner.state | float }}"
+        friendly_name: 'Dinner Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
+      light_threshold_hallway:
+        value_template: "{{ states.sensor.pirhallway_luminance.state | float < states.input_number.lighting_threshold_hallway.state | float }}"
+        friendly_name: 'Hallway Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
+      light_threshold_bedroom:
+        value_template: "{{ states.sensor.fibaro_system_fgms001_motion_sensor_luminance_7_3.state | float < states.input_number.lighting_threshold_bedroom.state | float }}"
+        friendly_name: 'Bedroom Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
+      light_threshold_outdoor:
+        value_template: "{{ states.sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_3.state | float < states.input_number.lighting_threshold_outdoor.state | float }}"
+        friendly_name: 'Outdoor Light threshold'
+        device_class: light
+
+################################################
+## Trend
+###############################################
+
+  - platform: trend
+    sensors:
+      outdoor_light:
+        entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_3
+
+################################################
+## HikVision
+###############################################
+
+  - platform: hikvision
+    host: !secret hikvision_ip
+    username: !secret hikvision_username
+    password: !secret hikvision_password
+
+
+################################################
+## Automations
+################################################
+
+# automation:

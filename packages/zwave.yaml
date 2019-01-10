@@ -1,0 +1,648 @@
+################################################################
+## Packages / Z Wave
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'zwave'
+
+      expose: &expose
+        <<: *customize
+
+################################################
+## Customize
+################################################
+
+
+###
+# Pir
+###
+
+    sensor.fibaro_system_fgms001zw5_motion_sensor_burglar:
+      <<: *customize
+      friendly_name: Kokken Stue
+    sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4:
+      <<: *customize
+      friendly_name: Kokken
+    sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_2:
+      <<: *customize
+      friendly_name: Gang
+    sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_5:
+      <<: *customize
+      friendly_name: Daglig Stue
+    sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6:
+      <<: *customize
+      friendly_name: Bedroom
+    sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3:
+      <<: *customize
+      friendly_name: Entre
+    sensor.aeotec_zw100_multisensor_6_burglar:
+      <<: *customize
+      friendly_name: Bad
+
+###
+# Temp
+###
+
+    sensor.aeotec_zw100_multisensor_6_temperature:
+      <<: *customize
+      friendly_name: Bathroom pir temp
+    sensor.aeotec_zw100_multisensor_6_relative_humidity:
+      <<: *customize
+      friendly_name: Bathroom pir humidity
+    sensor.fibaro_system_fgms001zw5_motion_sensor_temperature:
+      <<: *customize
+      friendly_name: Kitchen Family room pir
+    sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_4:
+      <<: *customize
+      friendly_name: Kitchen pir
+    sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_2:
+      <<: *customize
+      friendly_name: Hallway pir
+    sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_5:
+      <<: *customize
+      friendly_name: Family room pir
+    sensor.fibaro_system_fgms001_motion_sensor_temperature_6_1:
+      <<: *customize
+      friendly_name: Dining room pir
+    sensor.fibaro_system_fgms001_motion_sensor_temperature_7_1:
+      <<: *customize
+      friendly_name: Bedroom pir
+    sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_3:
+      <<: *customize
+      friendly_name: Entrance pir
+
+###
+# Lux
+###
+
+    sensor.fibaro_system_fgms001zw5_motion_sensor_luminance:
+      <<: *customize
+      friendly_name: Kokken Stue
+    sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_4:
+      <<: *customize
+      friendly_name: Kokken
+    sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_2:
+      <<: *customize
+      friendly_name: Gang
+    sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_5:
+      <<: *customize
+      friendly_name: Daglig Stue
+    sensor.fibaro_system_fgms001_motion_sensor_luminance_6_3:
+      <<: *customize
+      friendly_name: Spise Stue
+    sensor.fibaro_system_fgms001_motion_sensor_luminance_7_3:
+      <<: *customize
+      friendly_name: Sovevaerelse
+    sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_3:
+      <<: *customize
+      friendly_name: Entre
+    sensor.aeotec_zw100_multisensor_6_luminance:
+      <<: *customize
+      friendly_name: Bad
+
+
+################################################
+## Group
+################################################
+
+
+################################################
+## zwave
+################################################
+
+zwave:
+  usb_path: /dev/ttyACM0
+
+#################################################
+## Scripts
+#################################################
+script:
+
+#################################################
+## Bathroom
+#################################################
+
+  bathroom_timed_lamp:
+    alias: "bathroom, Turn on bathroom light and set timer"
+    sequence:
+      # Cancel ev. old timers
+      - service: script.turn_off
+        data:
+          entity_id: script.bathroom_timer_off
+      - service: light.turn_on
+        entity_id: light.bathroom
+        data_template:
+          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+
+  bathroom_timer_off:
+    alias: "bathroom, Turn off bathroom light after 10 minutes"
+    sequence:
+      - delay: '00:{{ states.input_number.bathroom_delay.state | int }}:00'
+      - service: light.turn_off
+        data:
+          entity_id: light.bathroom
+
+#################################################
+## Kitchen
+#################################################
+
+  kitchen_light_on_cancel_timer:
+    alias: "kitchen, Turn on light and set timer"
+    sequence:
+      # Cancel ev. old timers
+      - service: script.turn_off
+        data:
+          entity_id: script.kitchen_light_delayed_off
+      - service: light.turn_on
+        entity_id: light.kitchen
+        data_template:
+          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+
+  kitchen_light_delayed_off:
+    alias: "kitchen, Turn off light after 10 minutes"
+    sequence:
+      - delay: '00:{{ states.input_number.kitchen_delay.state | int }}:00'
+      - service: light.turn_off
+        data:
+          entity_id: light.kitchen
+      - service: switch.turn_off
+        data:
+          entity_id: switch.switch_2
+      - service: light.turn_off
+        data:
+          entity_id: light.kitchen_cabinet
+
+#################################################
+## Entrance
+#################################################
+
+  entrance_timed_lamp:
+    alias: "Entrance, Turn on light and set timer"
+    sequence:
+      # Cancel ev. old timers
+      - service: script.turn_off
+        data:
+          entity_id: script.Entrance_timer_off
+      - service: light.turn_on
+        entity_id: light.entrance
+        data_template:
+          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+
+  entrance_timer_off:
+    alias: "Entrance, Turn off light after x minutes"
+    sequence:
+      - delay: '00:{{ states.input_number.entrance_delay.state | int }}:00'
+      - service: light.turn_off
+        data:
+          entity_id: light.entrance
+
+#################################################
+## Hallway
+#################################################
+
+  hallway_timed_lamp:
+    alias: "hallway, Turn on light and set timer"
+    sequence:
+      # Cancel ev. old timers
+      - service: script.turn_off
+        data:
+          entity_id: script.hallway_timer_off
+      - service: light.turn_on
+        entity_id: light.gang
+        data_template:
+          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+
+  hallway_timer_off:
+    alias: "Hallway, Turn off light after x minutes"
+    sequence:
+      - delay: '00:{{ states.input_number.hallway_delay.state | int }}:00'
+      - service: light.turn_off
+        data:
+          entity_id: light.gang
+
+################################################
+## Automations
+################################################
+automation:
+
+######################
+## lights
+######################
+
+################################################
+## Bathroom
+################################################
+
+  - alias: Bathroom, Turn on light, when switch is ACTIVE
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_13
+      to: 'on'
+    action:
+      service: light.turn_on
+      entity_id: light.bathroom
+
+  - alias: Bathroom, Turn off light, when switch is InActive
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_13
+      to: 'off'
+    action:
+      service: light.turn_off
+      entity_id: light.bathroom
+
+  - alias: Bathroom, Turn on mirror light, when switch is Active
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_14
+      to: 'on'
+    action:
+      service: switch.turn_on
+      entity_id: switch.switch_3
+
+  - alias: Bathroom, Turn off mirror light, when switch is InActive
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_14
+      to: 'off'
+    action:
+      service: switch.turn_off
+      entity_id: switch.switch_3
+
+  - alias: Bathroom, Turn off mirror light, after xx minutes
+    trigger:
+      platform: state
+      entity_id: switch.switch_3
+      from: 'off'
+      to: 'on'
+      for: 00:10:00
+    action:
+      service: switch.turn_off
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_14
+
+  - alias: Bathroom, Turn on light by movement
+    trigger:
+      platform: state
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar
+      to: '8'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.bathroom_timed_lamp
+
+  - alias: Bathroom, Turn off light set by movement
+    trigger:
+      platform: state
+      entity_id: sensor.aeotec_zw100_multisensor_6_burglar
+      to: '0'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.bathroom_timer_off
+
+####################
+## Fan
+####################
+
+  - alias: Bathroom, Turn on bathroom fan, when switch is Active
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_15
+      to: 'on'
+    action:
+      service: switch.turn_on
+      entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+
+  - alias: Bathroom, Turn off bathroom fan, when switch is InActive
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_15
+      to: 'off'
+    action:
+      service: switch.turn_off
+      entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+
+  - alias: Bathroom, Turn off bathroom fan, after x minutes
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_15
+      to: 'on'
+      for: 00:15:00
+    condition:
+      condition: state
+      entity_id: binary_sensor.bath_hum_below_xx
+      state: 'off'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+      - service: switch.turn_off
+        entity_id: switch.logic_soft_zhc5010_wall_switch_switch_15
+
+  - alias: Bathroom, Turn off bathroom fan, when lights have been off for x minutes, and humidity is below y
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bath_hum_below_xx
+      to: 'off'
+ #     below: 58
+ #     below: '{{ states.input_number.humidity_bathroom_fan_threshold.state }}'
+      for: '00:15:00'
+ #     for: '00:{{ states.input_number.bathroom_fan_delay.state | int }}:00'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+      - service: switch.turn_off
+        entity_id: switch.logic_soft_zhc5010_wall_switch_switch_15
+
+  - alias: Bathroom, Turn on bathroom fan if humidity is above x
+    trigger:
+      platform: state
+      entity_id: binary_sensor.bath_hum_above_xx
+      to: 'on'
+    action:
+      service: switch.turn_on
+      entity_id: switch.fibaro_system_fgs222_double_relay_switch_2x15kw_switch
+
+################################################
+## Kitchen
+################################################
+
+  - alias: Kitchen, Turn on kitchen light by movement
+    trigger:
+      platform: state
+      entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4
+      to: '8'
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_threshold_kitchen
+      state: 'on'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: script.kitchen_light_on_cancel_timer
+      - condition: and
+        conditions:
+          - condition: state
+            entity_id: 'input_boolean.automate_kitchen_cabinet_light'
+            state: 'on'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.switch_2
+      - service: light.turn_on
+        data:
+          entity_id: light.kitchen_cabinet
+          brightness: 254
+          color_temp: 233
+
+  - alias: Kitchen, Turn off kitchen light set by movement
+    trigger:
+      platform: state
+      entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4
+      to: '0'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: 'sensor.fibaro_system_fgms001zw5_motion_sensor_burglar'
+          state: '0'
+        - condition: state
+          entity_id: 'sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4'
+          state: '0'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.kitchen_light_delayed_off
+
+################################################
+## Entrance
+################################################
+
+  - alias: Entrance, turn on frontdoor lights someone is getting home
+    trigger:
+      platform: state
+      entity_id: device_tracker.huawei_p20398f2daff904b8, device_tracker.3c286d0222fd
+      to: 'home'
+    condition:
+      - condition: state
+        entity_id: binary_sensor.light_threshold_outdoor
+        state: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.switch_5
+
+  - alias: Entrance, turn on frontdoor lights when opening door from inside
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d639af
+      to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+          state: '8'
+        - condition: state
+          entity_id: binary_sensor.light_threshold_outdoor
+          state: 'on'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.switch_5
+
+  - alias: Entrance, Turn off frontdoor light
+    trigger:
+      platform: state
+      entity_id: switch.switch_5
+      to: 'on'
+      from: 'off'
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    action:
+      - service: switch.turn_off
+        entity_id: switch.switch_5
+
+  - alias: Entrance, Turn on entrance light
+    trigger:
+      platform: state
+      entity_id: switch.relayentrance_switch_2
+      to: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: group.entrance_lights
+        data_template:
+          brightness: "{{ states('input_number.hue_nightlight_brightness')|int }}"
+
+  - alias: Entrance, Turn off entrance light
+    trigger:
+      platform: state
+      entity_id: switch.relayentrance_switch_2
+      to: 'off'
+    action:
+      service: light.turn_off
+      entity_id: group.entrance_lights
+
+  - alias: Entrance, Turn on entrance light by movement
+    trigger:
+      platform: state
+      entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+      to: '8'
+    condition:
+      condition: state
+      entity_id: binary_sensor.light_threshold_entrance
+      state: 'on'
+      # If your sensor value needs to be adjusted
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.Entrance_timed_lamp
+
+  - alias: Entrance, Turn off entrance lights set by movement
+    trigger:
+      platform: state
+      entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+      to: '0'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.Entrance_timer_off
+
+
+################################################
+## Hallway
+################################################
+
+  - alias: Hallway, Turn on hallway light by movement
+    trigger:
+      platform: state
+      entity_id: sensor.pirhallway_burglar
+      to: '8'
+    condition:
+      condition: state
+      entity_id: switch.switchbedroom_switch_4
+      state: 'off'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.hallway_timed_lamp
+
+  - alias: Hallway, Turn off hallway lights set by movement
+    trigger:
+      platform: state
+      entity_id: sensor.pirhallway_burglar
+      to: '0'
+    condition:
+      condition: state
+      entity_id: switch.switchbedroom_switch_4
+      state: 'off'
+    action:
+      service: homeassistant.turn_on
+      entity_id: script.hallway_timer_off
+
+  - alias: Hallway, Turn on hallway lights through bedroom switch
+    trigger:
+      platform: state
+      entity_id: switch.switchbedroom_switch_4
+      to: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: light.gang
+        data_template:
+          brightness: 100
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+
+  - alias: Hallway, Turn off hallway lights through bedroom switch
+    trigger:
+      platform: state
+      entity_id: switch.switchbedroom_switch_4
+      to: 'off'
+    action:
+      service: light.turn_off
+      entity_id: light.gang
+
+################################################
+## Bedroom
+################################################
+
+  - alias: Bedroom, Turn on bedroom light
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_9
+      to: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: light.bedroom
+        data_template:
+          brightness: 255
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+      - service: switch.turn_off
+        entity_id: switch.logic_soft_zhc5010_wall_switch_switch_10
+
+  - alias: Bedroom, Turn off bedroom light
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_9
+      to: 'off'
+    condition:
+      condition: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_10
+      state: 'off'
+    action:
+      service: light.turn_off
+      entity_id: light.bedroom
+
+  - alias: Bedroom, Turn on bedroom light 50 percent
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_10
+      to: 'on'
+    action:
+      - service: light.turn_on
+        entity_id: light.bedroom
+        data_template:
+          brightness: 100
+          color_temp: "{{ states('input_number.color_temp')|int+154 }}"
+      - service: switch.turn_off
+        entity_id: switch.logic_soft_zhc5010_wall_switch_switch_9
+
+  - alias: Bedroom, Turn off bedroom light 50 percent
+    trigger:
+      platform: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_10
+      to: 'off'
+    condition:
+      condition: state
+      entity_id: switch.logic_soft_zhc5010_wall_switch_switch_9
+      state: 'off'
+    action:
+      service: light.turn_off
+      entity_id: light.bedroom
+
+  - alias: Bedroom, Auto Turn off bedroom lights if no activity for x minutes
+    trigger:
+      platform: state
+      entity_id: sensor.pirbedroom_burglar
+      to: '0'
+      for:
+        minutes: 10
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: switch.logic_soft_zhc5010_wall_switch_switch
+          state: 'on'
+        - condition: state
+          entity_id: switch.logic_soft_zhc5010_wall_switch_switch_2
+          state: 'on'
+    action:
+      - service: switch.turn_off
+        entity_id: switch.logic_soft_zhc5010_wall_switch_switch
+      - service: switch.turn_off
+        entity_id: switch.logic_soft_zhc5010_wall_switch_switch_2

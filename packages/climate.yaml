@@ -1,0 +1,119 @@
+################################################################
+## Packages / Climate
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'climate'
+
+      expose: &expose
+        <<: *customize
+
+    ################################################
+    ## Group
+    ################################################
+
+    group.cliamte:
+      <<: *customize
+      friendly_name: "climate"
+
+    ################################################
+    ## Switch
+    ################################################
+
+#    switch.dining_room_siren_switch:
+#      <<: *customize
+#      friendly_name: "Dining Room Siren"
+
+#    switch.master_bedroom_siren_switch:
+#      <<: *customize
+#      friendly_name: "Master Bedroom Siren"
+
+################################################
+## Group
+################################################
+
+group:
+  climate:
+    control: hidden
+    view: true
+    icon: mdi:temperature-celsius
+    name: temperatur
+    entities:
+      - group.climate_dark_sky
+      - group.climate_family_room
+      - group.climate_bedroom
+      - group.climate_children_room
+      - group.climate_kitchen
+      - group.climate_others
+
+  climate_dark_sky:
+    name: Dark Sky
+    entities:
+      - sensor.dark_sky_daily_summary
+      - sensor.dark_sky_hourly_summary
+      - sensor.dark_sky_humidity
+      - sensor.dark_sky_pressure
+      - sensor.dark_sky_summary
+      - sensor.dark_sky_temperature
+      - sensor.dark_sky_wind_speed
+
+  climate_family_room:
+    name: Family Room
+    entities:
+      - climate.living_room
+      - sensor.living_room_temperature
+      - sensor.living_room_humidity
+      - sensor.living_room_heating
+      - sensor.fibaro_system_fgms001_motion_sensor_temperature_6_1
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_5
+
+  climate_bedroom:
+    name: Bedroom
+    entities:
+      - climate.bedroom
+      - sensor.bedroom_temperature
+      - sensor.bedroom_humidity
+      - sensor.bedroom_heating
+
+  climate_children_room:
+    name: Children Room
+    entities:
+      - climate.children_room
+      - sensor.children_room_temperature
+      - sensor.children_room_humidity
+      - sensor.children_room_heating
+
+  climate_kitchen:
+    name: Kitchen
+    entities:
+      - sensor.temperature_158d0001b790d1
+      - sensor.humidity_158d0001b790d1
+      - sensor.temperature_158d000170f80c
+      - sensor.humidity_158d000170f80c
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_4
+
+  climate_others:
+    name: Climate other
+    entities:
+      - sensor.temperature_158d00016ff8b1
+      - sensor.humidity_158d00016ff8b1
+      - sensor.temperature_158d0001b94b81
+      - sensor.humidity_158d0001b94b81
+      - sensor.temperature_158d0001873200
+      - sensor.humidity_158d0001873200
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_3
+      - sensor.fibaro_system_fgms001_motion_sensor_temperature_7_1
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature_2
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_temperature
+      - sensor.aeotec_zw100_multisensor_6_temperature

@@ -1,0 +1,54 @@
+################################################################
+## Packages / Dark Sky
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'dark_sky'
+
+      expose: &expose
+        <<: *customize
+
+#################################################
+## Dark Sky
+#################################################
+
+weather:
+  - platform: darksky
+    api_key: !secret darkskyapi
+#     monitored_conditions:
+#       - summary
+# #      - icon
+# #      - nearest_storm_distance
+# #      - nearest_storm_bearing
+# #      - precip_type
+# #      - precip_intensity
+# #      - precip_probability
+#       - temperature
+# #      - apparent_temperature
+# #      - dew_point
+#       - wind_speed
+# #      - wind_bearing
+# #      - cloud_cover
+#       - humidity
+#       - pressure
+# #      - visibility
+# #      - minutely_summary
+#       - hourly_summary
+#       - daily_summary
+# #      - temperature_max
+# #      - temperature_min
+# #      - apparent_temperature_max
+# #      - apparent_temperature_min
+# #      - precip_intensity_max
+#     update_interval: '00:30:00'

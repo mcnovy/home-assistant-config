@@ -1,0 +1,554 @@
+################################################################
+## Packages / Alarm
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'alarm'
+
+      expose: &expose
+        <<: *customize
+
+    ################################################
+    ## Alarm Control Panel
+    ################################################
+
+    alarm_control_panel.alarm_system:
+      <<: *customize
+      friendly_name: "Alarm System"
+
+    ################################################
+    ## Group
+    ################################################
+
+    group.alarm_system:
+      <<: *customize
+      friendly_name: "Alarm System"
+
+    ################################################
+    ## Switch
+    ################################################
+
+#    switch.dining_room_siren_switch:
+#      <<: *customize
+#      friendly_name: "Dining Room Siren"
+
+#    switch.master_bedroom_siren_switch:
+#      <<: *customize
+#      friendly_name: "Master Bedroom Siren"
+
+################################################
+## Group
+################################################
+
+group:
+  alarm_system:
+    control: hidden
+    view: yes
+    icon: mdi:alarm-light
+    name: Alarm
+    entities:
+      - alarm_control_panel.alarm_system
+      - group.window_sensors
+      - group.movement_sensors
+      - group.isanyonehome
+
+  isanyonehome_with_bt:
+    name: Is anyone home?
+    entities:
+      - device_tracker.huawei_p20
+      - device_tracker.huawei_p20398f2daff904b8
+      - device_tracker.pixel_3
+      - device_tracker.3c286d0222fd
+
+  isanyonehome:
+    name: Is anyone home?
+    entities:
+      - device_tracker.huawei_p20398f2daff904b8
+      - device_tracker.3c286d0222fd
+
+#######
+### Window Sensors
+######
+  window_sensors:
+    entities:
+      - binary_sensor.door_window_sensor_158d0001d6843d
+      - binary_sensor.door_window_sensor_158d0001d683b2
+      - binary_sensor.door_window_sensor_158d0001d6838e
+      - binary_sensor.door_window_sensor_158d0001d639af
+      - binary_sensor.door_window_sensor_158d0001d63711
+      - binary_sensor.door_window_sensor_158d0001d63624
+      - binary_sensor.door_window_sensor_158d00019e16b9
+      - binary_sensor.door_window_sensor_158d0001873fab
+
+  movement_sensors:
+    entities:
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_2
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_5
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_7
+      - sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+      - sensor.aeotec_zw100_multisensor_6_burglar
+      - binary_sensor.motion_sensor_158d00016c1173
+
+################################################
+## Alarm Control Panel
+################################################
+
+
+#################################################
+## Scripts
+#################################################
+script:
+
+#################################################
+## open window or door
+#################################################
+
+  alarm_maindooraccess:
+    alias: "Alarm, Maindoor access, delay alarm"
+    sequence:
+      - service: media_player.volume_set
+        data_template:
+          entity_id: "media_player.kitchen"
+          volume_level: "0.4"
+      - service: tts.google_say
+        data_template:
+          message: "Advarsel, Du har 30 sekunder til at deaktivere alarmen"
+          language: "da"
+          entity_id: "media_player.kitchen"
+
+  alarm_delay:
+    alias: "alarm, delay alarm notification"
+    sequence:
+      # Cancel ev. old timers
+      # - service: script.turn_off
+      #   data:
+      #     entity_id: script.timer_off_bathroom
+      - delay: '00:00:30'
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+
+  alarm_setup:
+    alias: "Alarm, Setup"
+    sequence:
+      - service: media_player.sonos_join
+        data_template:
+          master: "media_player.bedroom"
+          entity_id: "media_player.kitchen"
+      - service: media_player.volume_set
+        data_template:
+          entity_id: "media_player.bedroom"
+          volume_level: "0.4"
+      - service: media_player.volume_set
+        data_template:
+          entity_id: "media_player.kitchen"
+          volume_level: "0.4"
+      - alias: loop_alarm_sound
+        service: script.turn_on
+        data:
+          entity_id: script.alarm_sound
+      - alias: Alarm, set alarm active
+        service: homeassistant.turn_on
+        data:
+          entity_id: input_boolean.alarm_active
+
+  alarm_sound:
+    alias: "Alarm Sound"
+    sequence:
+      - service: media_player.play_media
+        data_template:
+          entity_id: "media_player.bedroom"
+          media_content_type: music
+          media_content_id: "http://192.168.0.59:8123/local/alarm.mp3"
+      - delay: "00:00:30"
+      - service: tts.google_say
+        data_template:
+          message: "Alarm, Neighbors have been warned"
+          language: "en-us"
+          entity_id: "media_player.bedroom"
+      - delay: "00:00:05"
+      - service: tts.google_say
+        data_template:
+          message: "Alarm, Naboerne er blevet alarmeret"
+          language: "da"
+          entity_id: "media_player.bedroom"
+      - alias: loop_alarm
+        service: script.turn_on
+        data:
+          entity_id: script.alarm_repeat
+
+
+  alarm_repeat:
+    alias: Alarm Repeat
+    sequence:
+      - delay:
+          # time for flash light off
+          seconds: 5
+      - alias: loop_alarm_sound
+        service: script.turn_on
+        data:
+          entity_id: script.alarm_sound
+
+
+  alarm_going_outside:
+    alias: Alarm going outside
+    sequence:
+      - delay:
+          # time for flash light off
+          minutes: 5
+
+################################################
+## Automations
+################################################
+
+automation:
+
+#########################################
+##  Activate/Deactivate Alarm
+#########################################
+
+  - alias: Alarm, everyone have left the building
+    trigger:
+      platform: state
+      entity_id: group.isanyonehome
+      to: 'not_home'
+      for: 00:05:00
+    action:
+      - service: homeassistant.turn_on
+        data:
+          entity_id: input_boolean.alarm
+      - service: light.turn_off
+        data:
+          entity_id: group.mostusedlights
+      - service: remote.turn_off
+        data:
+          entity_id: remote.living_room
+
+  - alias: Alarm, someone have entered the buliding
+    trigger:
+      platform: state
+      entity_id: group.isanyonehome
+      to: 'home'
+    action:
+      - service: homeassistant.turn_off
+        data:
+          entity_id: input_boolean.alarm
+
+
+  - alias: Alarm, Stop active alarm
+    trigger:
+      platform: state
+      entity_id: input_boolean.alarm_active
+      to: 'off'
+    action:
+      - service: script.turn_off
+        data:
+           entity_id: script.alarm_repeat
+      - service: script.turn_off
+        data:
+           entity_id: script.alarm_sound
+      - service: script.turn_off
+        data:
+           entity_id: script.alarm_setup
+      - service: media_player.media_stop
+        data:
+           entity_id: media_player.bedroom
+      - service: media_player.media_stop
+        data:
+           entity_id: media_player.kitchen
+
+
+#########################################
+##  CCTV
+#########################################
+
+  - alias: Alarm, person is detected in backyard, begin recording.
+    trigger:
+      platform: state
+      entity_id: sensor.mqtt_sensor
+      to: 'on'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, person set på teressen'
+      - service: switch.turn_on
+        data:
+          entity_id: switch.activate_recording_of_backyard_camera
+
+  - alias: Alarm, Turn off recording.
+    trigger:
+      - platform: state
+        entity_id: sensor.mqtt_sensor
+        to: 'off'
+      - platform: state
+        entity_id: sensor.mqtt_sensor
+        to: 'unknown'
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.activate_recording_of_backyard_camera
+
+#########################################
+##  PIR - Alarm
+#########################################
+
+  - alias: Alarm, PIR is triggered, no one is home
+    trigger:
+      - platform: state
+        entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_2, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_5, 
+sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_multisensor_6_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6
+        to: '8'
+      - platform: state
+        entity_id: sensor.pir_living_room_right, sensor.pir_living_room_left, sensor.pir_bryggers
+        to: 'True'
+    condition:
+      condition: state
+      entity_id: input_boolean.alarm
+      state: 'on'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Person i huset'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+
+#########################################
+##  Window Sensors
+#########################################
+
+  - alias: Alarm, kitchen window opens, no PIR activated
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d00019e16b9
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: 'sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4'
+          state: '0'
+        - condition: state
+          entity_id: 'sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4'
+          state: '254'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+  - alias: Alarm, bedroom window opens, no PIR activated
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d63711
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: 'sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6'
+          state: '0'
+        - condition: state
+          entity_id: 'sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6'
+          state: '254'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+  - alias: Alarm, childrens room window opens, no PIR activated
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d6843d
+      to: 'on'
+    condition:
+      - condition: state
+        entity_id: 'sensor.pir_childrens_room'
+        state: 'False'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+  - alias: Alarm, living room north window opens, no PIR activated
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d6838e
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: 'sensor.pir_living_room_south'
+          state: 'False'
+        - condition: state
+          entity_id: 'sensor.pir_living_room_north'
+          state: 'False'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+  - alias: Alarm, living room south window opens, no PIR activated
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001873fab
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: 'sensor.pir_living_room_south'
+          state: 'False'
+        - condition: state
+          entity_id: 'sensor.pir_living_room_north'
+          state: 'False'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+  - alias: Alarm, living room door opens, no PIR activated
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d63624
+      to: 'on'
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: 'sensor.pir_living_room_south'
+          state: 'False'
+        - condition: state
+          entity_id: 'sensor.pir_living_room_north'
+          state: 'False'
+    action:
+      - service: notify.discord
+        data_template:
+          target: !secret discord_notify
+          message: '@everyone - Alarm, Vindue aabnet'
+      - service: script.turn_on
+        entity_id: script.alarm_setup
+
+  - alias: Alarm, warning, maindoor open with alarm active
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d639af
+      to: 'on'
+    condition:
+      condition: state
+      entity_id: input_boolean.alarm
+      state: 'on'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: input_boolean.alarm
+      - service: script.turn_on
+        entity_id: script.alarm_maindooraccess
+      - service: light.turn_on
+        entity_id: group.entrance_lights
+        data_template:
+          brightness: "{{ states('input_number.hue_nightlight_brightness')|int }}"
+
+  - alias: Alarm, warning, maindoor open, alarm not active, going outside not active
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d639af
+      to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.alarm
+          state: 'False'
+        - condition: state
+          entity_id: script.alarm_going_outside
+          state: 'off'
+        - condition: or
+          conditions:
+           - condition: state
+             entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+             state: '3'
+           - condition: state
+             entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+             state: '0'
+    action:
+      - service: script.turn_on
+        entity_id: script.alarm_maindooraccess
+      - service: light.turn_on
+        entity_id: group.entrance_lights
+        data_template:
+          brightness: "{{ states('input_number.hue_nightlight_brightness')|int }}"
+
+  - alias: Alarm, warning, maindoor open, alarm not active, going outside active
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d639af
+      to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.alarm
+          state: 'False'
+        - condition: state
+          entity_id: script.alarm_going_outside
+          state: 'on'
+        - condition: or
+          conditions:
+           - condition: state
+             entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+             state: '3'
+           - condition: state
+             entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+             state: '0'
+    action:
+      - service: script.turn_off
+        entity_id: script.alarm_going_outside
+      - service: light.turn_on
+        entity_id: group.entrance_lights
+        data_template:
+          brightness: "{{ states('input_number.hue_nightlight_brightness')|int }}"
+
+  - alias: Alarm, maindoor open from inside
+    trigger:
+      platform: state
+      entity_id: binary_sensor.door_window_sensor_158d0001d639af
+      to: 'on'
+    condition:
+      condition: state
+      entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3
+      state: '8'
+    action:
+      - service: script.turn_on
+        entity_id: script.alarm_going_outside

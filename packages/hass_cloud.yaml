@@ -1,0 +1,80 @@
+################################################################
+## Packages / Home Assistant Cloud
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'hass_cloud'
+
+      expose: &expose
+        <<: *customize
+
+#################################################
+## Home Assistant Cloud
+#################################################
+
+cloud:
+  alexa:
+    filter:
+      include_entities:
+        - light.kitchen
+        - light.kitchen_cabinet
+        - light.bedroom
+        - light.behind_couch
+        - light.children_room
+        - light.dining_room
+        - light.entrance
+        - light.living_room_corner
+        - light.sideboard_high
+        - light.sideboard_low
+    entity_config:
+      light.kitchen:
+        name: Kitchen
+        description: The light in the kitchen
+        display_categories: LIGHT
+      light.kitchen_cabinet:
+        name: Kitchen Cabinet
+        description: The light in the kitchen cabinet
+        display_categories: LIGHT
+      light.bedroom:
+        name: bedroom
+        description: bedroom light
+        display_categories: LIGHT
+      light.behind_couch:
+        name: behind couch
+        description: behind couch light
+        display_categories: LIGHT
+      light.children_room:
+        name: childrens room
+        description: childrens room light
+        display_categories: LIGHT
+      light.dining_room:
+        name: Dining Room
+        description: Dining room light
+        display_categories: LIGHT
+      light.entrance:
+        name: entrance
+        description: entrance light
+        display_categories: LIGHT
+      light.living_room_corner:
+        name: living room corner
+        description: living room corner lights
+        display_categories: LIGHT
+      light.sideboard_high:
+        name: sideboard high
+        description: sideboard high lights
+        display_categories: LIGHT
+      light.sideboard_low:
+        name: sideboard low
+        description: sideboard low lights
+        display_categories: LIGHT

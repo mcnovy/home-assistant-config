@@ -1,0 +1,39 @@
+################################################################
+## Packages / Google Maps Travel Time
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'google_travel_time'
+
+      expose: &expose
+        <<: *customize
+
+#################################################
+## Google Maps Travel Time
+#################################################
+
+sensor:
+### Google Travel Time Home To Work - Sean
+  - platform: google_travel_time
+    name: Home to Work - Sean
+    api_key: !secret google_tt_api
+    origin: !secret google_home
+    destination: !secret google_work
+
+### Google Travel time Work to Home - Sean
+  - platform: google_travel_time
+    name: Work to Home - Sean
+    api_key: !secret google_tt_api
+    origin: !secret google_work
+    destination: !secret google_home

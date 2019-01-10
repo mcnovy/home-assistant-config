@@ -1,0 +1,139 @@
+################################################################
+## Packages / RESTful Sensor
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'restful_sensors'
+
+      expose: &expose
+        <<: *customize
+
+group:
+  stats:
+    view: yes
+    icon: mdi:graphql
+    entities:
+      - group.rpi_stats
+
+  rpi_stats:
+    entities:
+      - sensor.uptime
+      - sensor.processor_use
+      - sensor.load_1m
+      - sensor.memory_use
+
+#################################################
+## RESTful sensor
+#################################################
+
+sensor:
+#   - platform: rest
+#     name: outdoor frost
+#     resource: http://192.168.0.15:3000/api/alerts/1
+#     value_template: '{{ value_json.State }}'
+#     headers:
+#       Accept: application/json
+#       Authorization: !secret grafana_token
+
+#################################################
+## pi-hole sensor
+#################################################
+
+  - platform: mqtt
+    state_topic: "home/cambackyard"
+    expire_after: 120
+
+  - platform: uptime
+    name: Time Online
+    unit_of_measurement: days
+
+
+#################################################
+## have I been powned
+################################################
+
+  - platform: haveibeenpwned
+    email:
+      - !secret haveibeenpwned_1
+      - !secret haveibeenpwned_2
+      - !secret haveibeenpwned_3
+      - !secret haveibeenpwned_4
+
+################################################
+## MQTT
+##############################################
+
+
+  - platform: mqtt
+    name: pir_bryggers
+    icon: mdi:mdi-eye
+    state_topic: "zigbee2mqtt/0x00158d0001e55925"
+    value_template: "{{ value_json.occupancy }}"
+    payload_available: "online"
+    payload_not_available: "offline"
+    json_attributes:
+      - illuminance
+      - occupancy
+      - battery
+
+  - platform: mqtt
+    name: pir_living_room_south
+    state_topic: "zigbee2mqtt/0x00158d0002b5eed6"
+    icon: mdi:mdi-eye
+    value_template: "{{ value_json.occupancy }}"
+    payload_available: "online"
+    payload_not_available: "offline"
+    json_attributes:
+      - illuminance
+      - occupancy
+      - battery
+
+  - platform: mqtt
+    name: pir_living_room_north
+    state_topic: "zigbee2mqtt/0x00158d0001e518bf"
+    icon: mdi:mdi-eye
+    value_template: "{{ value_json.occupancy }}"
+    payload_available: "online"
+    payload_not_available: "offline"
+    json_attributes:
+      - illuminance
+      - occupancy
+      - battery
+
+  - platform: mqtt
+    name: pir_childrens_room
+    state_topic: "zigbee2mqtt/0x00158d0001e51724"
+    icon: mdi:mdi-eye
+    value_template: "{{ value_json.occupancy }}"
+    payload_available: "online"
+    payload_not_available: "offline"
+    json_attributes:
+      - illuminance
+      - occupancy
+      - battery
+
+  - platform: mqtt
+    name: temp_firkantet
+    state_topic: "zigbee2mqtt/0x00158d0002b88203"
+    icon: mdi:router-wireless
+
+  - platform: mqtt
+    name: window_sensor_bryggers
+    state_topic: "zigbee2mqtt/0x00158d0001d683b2"
+    icon: mdi:mdi-square
+    value_template: "{{ value_json.contact }}"
+    payload_available: "online"
+    payload_not_available: "offline"
+    json_attributes:
+      - battery

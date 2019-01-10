@@ -1,0 +1,87 @@
+################################################################
+## Packages / device tracker
+################################################################
+
+################################################
+## Customize
+################################################
+
+homeassistant:
+  customize:
+    ################################################
+    ## Node Anchors
+    ################################################
+
+    package.node_anchors:
+      customize: &customize
+        package: 'device_tracker'
+
+      expose: &expose
+        <<: *customize
+
+###############################################
+##### Rename Seans Phone
+###############################################
+    device_tracker.3c286d0222fd:
+      <<: *customize
+      friendly_name: "Seans Phone"
+
+    device_tracker.pixel_3:
+      <<: *customize
+      friendly_name: "Seans Phone BT"
+
+
+################################################
+###### Mariannes Phone
+################################################
+    device_tracker.huawei_p20398f2daff904b8:
+      <<: *customize
+      friendly_name: "Mariannes Phone"
+
+    device_tracker.huawei_p20:
+      <<: *customize
+      friendly_name: "Mariannes Phone BT"
+
+
+#################################################
+## unifi
+#################################################
+
+device_tracker:
+#  - platform: unifi
+#    host: !secret unifi_ip
+#    port: !secret unifi_port
+#    username: !secret unifi_username
+#    password: !secret unifi_password
+#    verify_ssl: false
+#    new_device_defaults:
+#      track_new_devices: false
+  - platform: unifi_direct
+    host: !secret unifi_direct_ip
+    username: !secret unifi_direct_username
+    password: !secret unifi_direct_password
+
+
+#################################################
+## Bluetooth
+#################################################
+
+#device_tracker:
+  - platform: bluetooth_tracker
+    new_device_defaults:
+      track_new_devices: false
+
+
+################################################
+## Group
+################################################
+
+#group:
+#  device_tracker:
+#    control: hidden
+#    view: true
+#    icon: mdi:account-multiple
+#    name: Device Tracker
+#    entities:
+#      - device_tracker.huawei_p9_lite
+#      - device_tracker.sean_mobil
