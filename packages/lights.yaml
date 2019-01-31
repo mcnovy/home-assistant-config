@@ -98,9 +98,6 @@ group:
       - light.dining_room
       - light.living_room
       - light.behind_couch
-      - light.sideboard_high
-      - light.sideboard_low
-      - light.living_room_corner
       - light.bedroom
       - light.kitchen
       - light.kitchen_cabinet

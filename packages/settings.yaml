@@ -27,56 +27,6 @@ homeassistant:
 ## Group
 ################################################
 
-group:
-  settings:
-    control: hidden
-    view: yes
-    icon: mdi:settings
-    name: Settings
-    entities:
-      - group.grp_settings_brightness
-      - group.grp_settings_delay
-      - input_boolean.alarm_active
-      - input_number.color_temp
-      - input_number.working_lights_temp
-      - group.grp_settings_misc
-      - group.grp_settings_light_threshold
-
-  grp_settings_brightness:
-    name: Brightness Settings
-    entities:
-      - input_number.hue_nightlight_brightness
-      - input_number.current_hue_brightness
-
-  grp_settings_delay:
-    name: Delay Settings
-    entities:
-      - input_number.kitchen_delay
-      - input_number.bathroom_delay
-      - input_number.entrance_delay
-      - input_number.hallway_delay
-
-  grp_settings_misc:
-    name: Misc Settings
-    entities:
-      - input_number.bathroom_fan_delay
-      - input_number.humidity_bathroom_fan_threshold_end
-      - input_number.humidity_bathroom_fan_threshold_start
-      - input_boolean.debug_messages
-      - input_select.climate_control
-
-  grp_settings_light_threshold:
-    name: Misc Settings
-    entities:
-      - input_number.lighting_threshold_entrance
-      - input_number.lighting_threshold_kitchen
-      - input_number.lighting_threshold_hallway
-      - input_number.lighting_threshold_outdoor
-      - input_number.lighting_threshold_bedroom
-      - input_number.lighting_threshold_livingroom
-      - input_number.lighting_threshold_dinner
-
-
 #################################################
 ## Sliders
 #################################################
@@ -257,7 +207,7 @@ input_number:
     step: 1
 
   bathroom_delay:
-    name: Delay
+    name: Delay Bathroom
     min: 0
     max: 20
     step: 1
@@ -269,7 +219,7 @@ input_number:
     step: 1
 
   hallway_delay:
-    name: Delay
+    name: Delay Hallway
     min: 0
     max: 20
     step: 1
@@ -281,19 +231,19 @@ input_number:
     step: 1
 
   bedroom_delay:
-    name: Delay
+    name: Delay Bedroom
     min: 0
     max: 20
     step: 1
 
   childrens_room_delay:
-    name: Delay
+    name: Delay Childrens Room
     min: 0
     max: 20
     step: 1
 
   washing_room_delay:
-    name: Delay
+    name: Delay Washing Room
     min: 0
     max: 20
     step: 1
@@ -309,13 +259,19 @@ input_number:
     step: 1
 
   lighting_threshold_kitchen:
-    name: Threshold
+    name: Threshold Kitchen
+    min: 5
+    max: 100
+    step: 1
+
+  lighting_threshold_kitchen_cabinet:
+    name: Threshold Kitchen Cabinet
     min: 5
     max: 100
     step: 1
 
   lighting_threshold_hallway:
-    name: Threshold
+    name: Threshold Hallway
     min: 5
     max: 100
     step: 1
@@ -327,7 +283,7 @@ input_number:
     step: 1
 
   lighting_threshold_bedroom:
-    name: Threshold
+    name: Threshold Bedroom
     min: 5
     max: 100
     step: 1
@@ -368,6 +324,48 @@ input_number:
     step: 5
 
 
+################################################################
+## Input Slider / Sound level
+################################################################
+
+
+  soundlvl_alarm_current:
+    name: Snd lvl, Alarm Current
+    min: 1
+    max: 100
+    step: 1
+
+  soundlvl_alarm_when_home:
+    name: Snd lvl, Alarm when Home
+    min: 1
+    max: 100
+    step: 1
+
+  soundlvl_alarm_when_not_home:
+    name: Snd lvl, Alarm when not home
+    min: 1
+    max: 100
+    step: 1
+
+  soundlvl_doorbell_current:
+    name: Snd lvl, Doorbell current
+    min: 1
+    max: 100
+    step: 1
+
+  soundlvl_doorbell_quiet:
+    name: Snd lvl, Doorbell when quiet
+    min: 1
+    max: 100
+    step: 1
+
+  soundlvl_doorbell_normal:
+    name: Snd lvl, Doorbell when normal
+    min: 1
+    max: 100
+    step: 1
+
+
 ###############################################################
 ## Input Select
 ###############################################################
@@ -404,5 +402,10 @@ input_boolean:
 
   alarm_active:
     name: Alarm Active
+    initial: off
+    icon: mdi:alarm
+
+  alarm_guest:
+    name: Alarm We have guests
     initial: off
     icon: mdi:alarm

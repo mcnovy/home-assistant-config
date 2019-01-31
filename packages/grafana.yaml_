@@ -40,11 +40,11 @@ homeassistant:
 ## Panel Iframe
 ################################################
 
-panel_iframe:
-  grafana:
-    title: 'Grafana'
-    url: !secret panel_grafana_url
-    icon: mdi:chart-pie
+# panel_iframe:
+#   grafana:
+#     title: 'Grafana'
+#     url: !secret panel_grafana_url
+#     icon: mdi:chart-pie
 
 ################################################
 ## Script

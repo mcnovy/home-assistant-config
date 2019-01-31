@@ -143,7 +143,7 @@ script:
       - service: light.turn_on
         entity_id: light.bathroom
         data_template:
-          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          brightness: "{{ states('input_number.current_hue_brightness_bathroom')|int }}"
           color_temp: "{{ states('input_number.color_temp')|int+154 }}"
 
   bathroom_timer_off:
@@ -168,7 +168,7 @@ script:
       - service: light.turn_on
         entity_id: light.kitchen
         data_template:
-          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          brightness: "{{ states('input_number.current_hue_brightness_kitchen')|int }}"
           color_temp: "{{ states('input_number.color_temp')|int+154 }}"
 
   kitchen_light_delayed_off:
@@ -195,11 +195,11 @@ script:
       # Cancel ev. old timers
       - service: script.turn_off
         data:
-          entity_id: script.Entrance_timer_off
+          entity_id: script.entrance_timer_off
       - service: light.turn_on
         entity_id: light.entrance
         data_template:
-          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          brightness: "{{ states('input_number.current_hue_brightness_entrance')|int }}"
           color_temp: "{{ states('input_number.color_temp')|int+154 }}"
 
   entrance_timer_off:
@@ -224,7 +224,7 @@ script:
       - service: light.turn_on
         entity_id: light.gang
         data_template:
-          brightness: "{{ states('input_number.current_hue_brightness')|int }}"
+          brightness: "{{ states('input_number.current_hue_brightness_hallway')|int }}"
           color_temp: "{{ states('input_number.color_temp')|int+154 }}"
 
   hallway_timer_off:
@@ -479,9 +479,9 @@ automation:
       to: 'on'
     action:
       - service: light.turn_on
-        entity_id: group.entrance_lights
+        entity_id: light.entrance
         data_template:
-          brightness: "{{ states('input_number.hue_nightlight_brightness')|int }}"
+          brightness: "{{ states('input_number.current_hue_brightness_entrance')|int }}"
 
   - alias: Entrance, Turn off entrance light
     trigger:
@@ -490,7 +490,7 @@ automation:
       to: 'off'
     action:
       service: light.turn_off
-      entity_id: group.entrance_lights
+      entity_id: light.entrance
 
   - alias: Entrance, Turn on entrance light by movement
     trigger:
@@ -504,7 +504,7 @@ automation:
       # If your sensor value needs to be adjusted
     action:
       service: homeassistant.turn_on
-      entity_id: script.Entrance_timed_lamp
+      entity_id: script.entrance_timed_lamp
 
   - alias: Entrance, Turn off entrance lights set by movement
     trigger:
@@ -513,7 +513,7 @@ automation:
       to: '0'
     action:
       service: homeassistant.turn_on
-      entity_id: script.Entrance_timer_off
+      entity_id: script.entrance_timer_off
 
 
 ################################################

@@ -19,19 +19,19 @@ homeassistant:
       expose: &expose
         <<: *customize
 
-group:
-  stats:
-    view: yes
-    icon: mdi:graphql
-    entities:
-      - group.rpi_stats
-
-  rpi_stats:
-    entities:
-      - sensor.uptime
-      - sensor.processor_use
-      - sensor.load_1m
-      - sensor.memory_use
+# group:
+#   stats:
+#     view: yes
+#     icon: mdi:graphql
+#     entities:
+#       - group.rpi_stats
+#
+#   rpi_stats:
+#     entities:
+#       - sensor.uptime
+#       - sensor.processor_use
+#       - sensor.load_1m
+#       - sensor.memory_use
 
 #################################################
 ## RESTful sensor

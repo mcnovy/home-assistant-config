@@ -83,6 +83,12 @@ binary_sensor:
         device_class: light
   - platform: template
     sensors:
+      light_threshold_kitchen_cabinet:
+        value_template: "{{ (states.sensor.fibaro_system_fgms001zw5_motion_sensor_luminance.state | float < states.input_number.lighting_threshold_kitchen.state | float) or (states.sensor.fibaro_system_fgms001zw5_motion_sensor_luminance_4.state | float < states.input_number.lighting_threshold_kitchen.state | float) }}"
+        friendly_name: 'Kitchen Cabinet Light threshold'
+        device_class: light
+  - platform: template
+    sensors:
       light_threshold_livingroom:
         value_template: "{{ states.sensor.pirlivingroom_luminance.state | float < states.input_number.lighting_threshold_livingroom.state | float }}"
         friendly_name: 'Living Room Light threshold'

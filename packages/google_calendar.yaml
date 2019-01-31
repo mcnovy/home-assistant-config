@@ -33,20 +33,40 @@ google:
 
 automation:
 
- - alias: Change to nightlight and delays
+ - alias: Calender, Change to Late night and delays
    trigger:
      platform: state
-     entity_id: calendar.homeassistant
+     entity_id: calendar.late_night
      to: 'on'
    action:
      - service: input_number.set_value
        data_template:
          entity_id: input_number.current_hue_brightness
          value: '{{ states.input_number.hue_nightlight_brightness.state | float }}'
-     - service: input_number.select_value
+     - service: input_number.set_value
        data_template:
-         entity_id: input_number.current_dimmer_brightness
-         value: '{{ states.input_number.dimmer_nightlight_brightness.state | float }}'
+         entity_id: input_number.current_hue_brightness_entrance
+         value: '{{ states.input_number.hue_nightlight_brightness_entrance.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_bathroom
+         value: '{{ states.input_number.hue_nightlight_brightness_bathroom.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_kitchen
+         value: '{{ states.input_number.hue_nightlight_brightness_kitchen.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_kitchen_cabinet
+         value: '{{ states.input_number.hue_nightlight_brightness_kitchen_cabinet.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_washing_room
+         value: '{{ states.input_number.hue_nightlight_brightness_washing_room.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_hallway
+         value: '{{ states.input_number.hue_nightlight_brightness_hallway.state | float }}'
      - service: input_number.set_value
        data:
          entity_id: input_number.kitchen_delay
@@ -55,12 +75,151 @@ automation:
        data:
          entity_id: input_number.bathroom_delay
          value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.entrance_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.washing_room_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.hallway_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.kitchen_cabinet_delay
+         value: 2
+     - service: automation.turn_off
+       data:
+         entity_id: automation.global_doorbell
 
- - alias: Change to daylight and delays
+ - alias: Calender, Change to early night and delays
    trigger:
      platform: state
-     entity_id: calendar.homeassistant
-     to: 'off'
+     entity_id: calendar.night
+     to: 'on'
+   action:
+     # - service: input_number.set_value
+     #   data_template:
+     #     entity_id: input_number.current_hue_brightness
+     #     value: '{{ states.input_number.hue_nightlight_brightness.state | float }}'
+     # - service: input_number.set_value
+     #   data_template:
+     #     entity_id: input_number.current_hue_brightness_entrance
+     #     value: '{{ states.input_number.hue_nightlight_brightness_entrance.state | float }}'
+     # - service: input_number.set_value
+     #   data_template:
+     #     entity_id: input_number.current_hue_brightness_bathroom
+     #     value: '{{ states.input_number.hue_nightlight_brightness_bathroom.state | float }}'
+     # - service: input_number.set_value
+     #   data_template:
+     #     entity_id: input_number.current_hue_brightness_kitchen
+     #     value: '{{ states.input_number.hue_nightlight_brightness_kitchen.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_kitchen_cabinet
+         value: '{{ states.input_number.hue_nightlight_brightness_kitchen_cabinet.state | float }}'
+     # - service: input_number.set_value
+     #   data_template:
+     #     entity_id: input_number.current_hue_brightness_washing_room
+     #     value: '{{ states.input_number.hue_nightlight_brightness_washing_room.state | float }}'
+     # - service: input_number.set_value
+     #   data_template:
+     #     entity_id: input_number.current_hue_brightness_hallway
+     #     value: '{{ states.input_number.hue_nightlight_brightness_hallway.state | float }}'
+     # - service: input_number.set_value
+     #   data:
+     #     entity_id: input_number.kitchen_delay
+     #     value: 2
+     # - service: input_number.set_value
+     #   data:
+     #     entity_id: input_number.bathroom_delay
+     #     value: 2
+     # - service: input_number.set_value
+     #   data:
+     #     entity_id: input_number.entrance_delay
+     #     value: 2
+     # - service: input_number.set_value
+     #   data:
+     #     entity_id: input_number.washing_room_delay
+     #     value: 2
+     # - service: input_number.set_value
+     #   data:
+     #     entity_id: input_number.hallway_delay
+     #     value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.kitchen_cabinet_delay
+         value: 2
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.soundlvl_doorbell_current
+         value: '{{ states.input_number.soundlvl_doorbell_quiet.state }}'
+
+
+ - alias: Calender, Change to early morning and delays
+   trigger:
+     platform: state
+     entity_id: calendar.early_morning
+     to: 'on'
+   action:
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness
+         value: '{{ states.input_number.hue_nightlight_brightness.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_entrance
+         value: '{{ states.input_number.hue_nightlight_brightness_entrance.state | float }}'
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.current_hue_brightness_bathroom
+         value: 255
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_kitchen
+         value: '{{ states.input_number.hue_nightlight_brightness_kitchen.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_washing_room
+         value: '{{ states.input_number.hue_nightlight_brightness_washing_room.state | float }}'
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.current_hue_brightness_hallway
+         value: '{{ states.input_number.hue_nightlight_brightness_hallway.state | float }}'
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.kitchen_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.bathroom_delay
+         value: 8
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.kitchen_cabinet_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.entrance_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.hallway_delay
+         value: 2
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.washing_room_delay
+         value: 4
+
+
+ - alias: Calender, Change to daylight and delays
+   trigger:
+     platform: state
+     entity_id: calendar.morning
+     to: 'on'
    action:
      - service: input_number.set_value
        data:
@@ -68,7 +227,27 @@ automation:
          value: 255
      - service: input_number.set_value
        data:
-         entity_id: input_number.current_dimmer_brightness
+         entity_id: input_number.current_hue_brightness_kitchen
+         value: 255
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.current_hue_brightness_kitchen_cabinet
+         value: 255
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.current_hue_brightness_entrance
+         value: 255
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.current_hue_brightness_washing_room
+         value: 255
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.current_hue_brightness_bathroom
+         value: 255
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.current_hue_brightness_hallway
          value: 255
      - service: input_number.set_value
        data:
@@ -78,3 +257,26 @@ automation:
        data:
          entity_id: input_number.bathroom_delay
          value: 10
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.kitchen_cabinet_delay
+         value: 10
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.entrance_delay
+         value: 10
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.hallway_delay
+         value: 10
+     - service: input_number.set_value
+       data:
+         entity_id: input_number.washing_room_delay
+         value: 10
+     - service: input_number.set_value
+       data_template:
+         entity_id: input_number.soundlvl_doorbell_current
+         value: '{{ states.input_number.soundlvl_doorbell_normal.state }}'
+     - service: automation.turn_on
+       data:
+         entity_id: automation.global_doorbell

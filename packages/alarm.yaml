@@ -52,16 +52,16 @@ homeassistant:
 ################################################
 
 group:
-  alarm_system:
-    control: hidden
-    view: yes
-    icon: mdi:alarm-light
-    name: Alarm
-    entities:
-      - alarm_control_panel.alarm_system
-      - group.window_sensors
-      - group.movement_sensors
-      - group.isanyonehome
+  # alarm_system:
+  #   control: hidden
+  #   view: yes
+  #   icon: mdi:alarm-light
+  #   name: Alarm
+  #   entities:
+  #     - alarm_control_panel.alarm_system
+  #     - group.window_sensors
+  #     - group.movement_sensors
+  #     - group.isanyonehome
 
   isanyonehome_with_bt:
     name: Is anyone home?
@@ -123,7 +123,8 @@ script:
       - service: media_player.volume_set
         data_template:
           entity_id: "media_player.kitchen"
-          volume_level: "0.4"
+          volume_level: "0.5"
+      - delay: "00:00:05"
       - service: tts.google_say
         data_template:
           message: "Advarsel, Du har 30 sekunder til at deaktivere alarmen"
@@ -153,11 +154,11 @@ script:
       - service: media_player.volume_set
         data_template:
           entity_id: "media_player.bedroom"
-          volume_level: "0.4"
+          volume_level: "{{ states('input_number.soundlvl_alarm_current') | float / 100 }}"
       - service: media_player.volume_set
         data_template:
           entity_id: "media_player.kitchen"
-          volume_level: "0.4"
+          volume_level: "{{ states('input_number.soundlvl_alarm_current') | float / 100 }}"
       - alias: loop_alarm_sound
         service: script.turn_on
         data:
@@ -228,6 +229,10 @@ automation:
       entity_id: group.isanyonehome
       to: 'not_home'
       for: 00:05:00
+    condition:
+      condition: state
+      entity_id: input_boolean.alarm_guest
+      state: 'off'
     action:
       - service: homeassistant.turn_on
         data:
@@ -238,6 +243,10 @@ automation:
       - service: remote.turn_off
         data:
           entity_id: remote.living_room
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.soundlvl_alarm_current
+          value: '{{ states.input_number.soundlvl_alarm_when_not_home.state }}'
 
   - alias: Alarm, someone have entered the buliding
     trigger:
@@ -248,7 +257,10 @@ automation:
       - service: homeassistant.turn_off
         data:
           entity_id: input_boolean.alarm
-
+      - service: input_number.set_value
+        data_template:
+          entity_id: input_number.soundlvl_alarm_current
+          value: '{{ states.input_number.soundlvl_alarm_when_home.state }}'
 
   - alias: Alarm, Stop active alarm
     trigger:
@@ -311,8 +323,7 @@ automation:
   - alias: Alarm, PIR is triggered, no one is home
     trigger:
       - platform: state
-        entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_2, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_5, 
-sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_multisensor_6_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6
+        entity_id: sensor.fibaro_system_fgms001zw5_motion_sensor_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_4, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_2, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_5, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_multisensor_6_burglar, sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_6
         to: '8'
       - platform: state
         entity_id: sensor.pir_living_room_right, sensor.pir_living_room_left, sensor.pir_bryggers
@@ -339,6 +350,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       platform: state
       entity_id: binary_sensor.door_window_sensor_158d00019e16b9
       to: 'on'
+      for: '00:00:02'
     condition:
       condition: or
       conditions:
@@ -361,6 +373,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       platform: state
       entity_id: binary_sensor.door_window_sensor_158d0001d63711
       to: 'on'
+      for: '00:00:02'
     condition:
       condition: or
       conditions:
@@ -383,6 +396,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       platform: state
       entity_id: binary_sensor.door_window_sensor_158d0001d6843d
       to: 'on'
+      for: '00:00:02'
     condition:
       - condition: state
         entity_id: 'sensor.pir_childrens_room'
@@ -400,6 +414,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       platform: state
       entity_id: binary_sensor.door_window_sensor_158d0001d6838e
       to: 'on'
+      for: '00:00:02'
     condition:
       condition: or
       conditions:
@@ -422,6 +437,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       platform: state
       entity_id: binary_sensor.door_window_sensor_158d0001873fab
       to: 'on'
+      for: '00:00:02'
     condition:
       condition: or
       conditions:
@@ -444,6 +460,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       platform: state
       entity_id: binary_sensor.door_window_sensor_158d0001d63624
       to: 'on'
+      for: '00:00:02'
     condition:
       condition: or
       conditions:
@@ -508,7 +525,7 @@ sensor.fibaro_system_fgms001zw5_motion_sensor_burglar_3, sensor.aeotec_zw100_mul
       - service: light.turn_on
         entity_id: group.entrance_lights
         data_template:
-          brightness: "{{ states('input_number.hue_nightlight_brightness')|int }}"
+          brightness: "{{ states('input_number.current_hue_brightness_entrance')|int }}"
 
   - alias: Alarm, warning, maindoor open, alarm not active, going outside active
     trigger:
