@@ -55,3 +55,5 @@ sun:
 prometheus:
 
 hassio:
+
+system_health:
