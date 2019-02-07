@@ -15,6 +15,7 @@ appdaemon
 .HA_VERSION
 .uuid
 *.save
+.gitconfig
 bash_scripts
 custom_components
 panels
